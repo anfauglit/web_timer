@@ -9,28 +9,40 @@
 		.timer {
 			color: #17D4FE;
 			font-size: 180px;
-			font-family: Consolas;
+			font-family: Consolas, monospace;
 			letter-spacing: 7px;
+		}
+		.button {
+			background-color: #8E33AD;
+			border: 1px solid white;
+			color: white;
+			text-align: center;
+			font-size: 40px;
+			margin: 10px;
+			padding: 10px;
 		}
 	</style>
 	</head>
 	<body>
-		<div id="Timer0" class="timer" >
+		<div id="Timer0" class="timer" >00:00:00
 		</div>
-		<button id="0">Start</button>
+		<button id="0" class="button">Start</button>
+		<button id="T0" class="button">Reset</button>
 
-		<div id="Timer1" class="timer" >
+		<div id="Timer1" class="timer" >00:00:00
 		</div>
-		<button id="1">Start</button>
+		<button id="1" class="button">Start</button>
+		<button id="T1" class="button">Reset</button>
 
-		<div id="Timer2" class="timer" >
+		<div id="Timer2" class="timer" >00:00:00
 		</div>
-		<button id="2">Start</button>
+		<button id="2" class="button">Start</button>
+		<button id="T2" class="button">Reset</button>
 	<script>
 		class Timer {
 			constructor() {
 				this.start = null;
-				this.current = null;
+				this.total = 0;
 				this.is_on = false;
 			}
 		}
@@ -45,25 +57,33 @@
 		var start_timer = function () {
 			var id = this.id;
 			var btn = document.getElementById(id);
+			var tmp_date = new Date();
 			if (timers[id].is_on == false) {
-				if (timers[id].start == null) {
-					var tmp_date = new Date();
-					timers[id].start = Math.floor(tmp_date.getTime() / 1000); 
-					timers[id].current = timers[id].start; 
-				}
+				timers[id].start = Math.floor(tmp_date.getTime() / 1000); 
 				timers[id].is_on = true;
 				btn.innerText = "Stop";
 			} else {
+				timers[id].total += Math.floor(tmp_date.getTime() / 1000) - timers[id].start; 
 				timers[id].is_on = false;
 				btn.innerText = "Resume";
 			}
 		}
 
+		var reset_timer = function () {
+			var tmp_date = new Date();
+			var id = this.id;
+			var index = parseInt(id.slice(-1));
+			timers[index].total = 0;
+			timers[index].start = Math.floor(tmp_date / 1000);
+			document.getElementById("Timer" + index).innerText = "00:00:00";
+		}
+
 		function updateTimer() {
+			var current_time = new Date();
+			var tmp_time = Math.floor(current_time.getTime() / 1000);
 			for (i = 0; i < timers_number; ++i) {
 				if (timers[i].is_on) {
-					timers[i].current++;
-					var sec = timers[i].current - timers[i].start;
+					var sec = timers[i].total + (tmp_time - timers[i].start);
 					var h = Math.floor(sec / 60 / 60);
 					h = (h < 10) ? '0' + h : h.toString();
 					sec -= h * 60 * 60;
@@ -81,8 +101,11 @@
 		}
 
 		document.getElementById("0").addEventListener("click", start_timer);
+		document.getElementById("T0").addEventListener("click", reset_timer);
 		document.getElementById("1").addEventListener("click", start_timer);
+		document.getElementById("T1").addEventListener("click", reset_timer);
 		document.getElementById("2").addEventListener("click", start_timer);
+		document.getElementById("T2").addEventListener("click", reset_timer);
 		updateTimer();
 	</script>
 	</body>
