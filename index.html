@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<style>
+		body {
+			background: black;
+		}
+
+		.timer {
+			color: #17D4FE;
+			font-size: 180px;
+			font-family: Consolas;
+			letter-spacing: 7px;
+		}
+	</style>
+	</head>
+	<body>
+		<div id="Timer0" class="timer" >
+		</div>
+		<button id="0">Start</button>
+
+		<div id="Timer1" class="timer" >
+		</div>
+		<button id="1">Start</button>
+
+		<div id="Timer2" class="timer" >
+		</div>
+		<button id="2">Start</button>
+	<script>
+		class Timer {
+			constructor() {
+				this.start = null;
+				this.current = null;
+				this.is_on = false;
+			}
+		}
+
+		var timers_number = 3;
+		var timers = new Array();
+		for (i = 0; i < timers_number; ++i) {
+			timers.push(new Timer());
+		}
+
+
+		var start_timer = function () {
+			var id = this.id;
+			var btn = document.getElementById(id);
+			if (timers[id].is_on == false) {
+				if (timers[id].start == null) {
+					var tmp_date = new Date();
+					timers[id].start = Math.floor(tmp_date.getTime() / 1000); 
+					timers[id].current = timers[id].start; 
+				}
+				timers[id].is_on = true;
+				btn.innerText = "Stop";
+			} else {
+				timers[id].is_on = false;
+				btn.innerText = "Resume";
+			}
+		}
+
+		function updateTimer() {
+			for (i = 0; i < timers_number; ++i) {
+				if (timers[i].is_on) {
+					timers[i].current++;
+					var sec = timers[i].current - timers[i].start;
+					var h = Math.floor(sec / 60 / 60);
+					h = (h < 10) ? '0' + h : h.toString();
+					sec -= h * 60 * 60;
+					var min = Math.floor(sec / 60);
+					min = (min < 10) ? '0' + min : min.toString();
+					sec -= min * 60;
+					sec = (sec < 10) ? '0' + sec: sec.toString();
+					var time = h + ":" + min + ":" + sec;
+
+					document.getElementById("Timer" + i).innerText = time;
+
+				}
+			}
+			setTimeout(updateTimer, 1000);
+		}
+
+		document.getElementById("0").addEventListener("click", start_timer);
+		document.getElementById("1").addEventListener("click", start_timer);
+		document.getElementById("2").addEventListener("click", start_timer);
+		updateTimer();
+	</script>
+	</body>
+</html>
+
