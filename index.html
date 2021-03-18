@@ -4,13 +4,26 @@
 	<style>
 		body {
 			background: black;
+			width: 100%;
 		}
-
+		.timer_wrapper {
+			position: relative;
+			width: 100%;
+			height: 250px;
+			overflow: hidden;
+			margin: 25px;
+		}
 		.timer {
+			text-align: center;
 			color: #17D4FE;
 			font-size: 180px;
 			font-family: Consolas, monospace;
 			letter-spacing: 7px;
+			position: absolute;
+			height: 90%;
+			left: 0px;
+			top: 0px;
+			transform-origin: left;
 		}
 		.button {
 			background-color: #8E33AD;
@@ -21,29 +34,43 @@
 			margin: 10px;
 			padding: 10px;
 		}
+		.btns {
+			position: relative;
+			z-index: 200;
+		}
 	</style>
 	</head>
 	<body>
-		<div id="Timer0" class="timer" >00:00:00
+		<div class="timer_wrapper">
+			<div id="Timer0" class="timer">00:00:00</div>
 		</div>
-		<button id="0" class="button">Start</button>
-		<button id="T0" class="button">Reset</button>
+		<div class="btns">
+			<button id="0" class="button">Start</button>
+			<button id="T0" class="button">Reset</button>
+		</div>
 
-		<div id="Timer1" class="timer" >00:00:00
+		<div class="timer_wrapper">
+		<div id="Timer1" class="timer" >00:00:00 </div>
 		</div>
+		<div class="btns">
 		<button id="1" class="button">Start</button>
 		<button id="T1" class="button">Reset</button>
-
-		<div id="Timer2" class="timer" >00:00:00
 		</div>
+
+		<div class="timer_wrapper">
+		<div id="Timer2" class="timer" >00:00:00 </div>
+		</div>
+		<div class="btns">
 		<button id="2" class="button">Start</button>
 		<button id="T2" class="button">Reset</button>
+		</div>
 	<script>
 		class Timer {
 			constructor() {
 				this.start = null;
 				this.total = 0;
 				this.is_on = false;
+				this.scaled = false;
 			}
 		}
 
@@ -100,12 +127,31 @@
 			setTimeout(updateTimer, 1000);
 		}
 
+		function scale_timer() {
+			var id = this.id;
+			var index = parseInt(id.slice(-1));
+			if (timers[index].scaled == false) {
+				this.style.transform = "scale(1.7)";
+				this.style.color = "red";
+				timers[index].scaled = true;
+			} else {
+				this.style.transform = "scale(1)";
+				timers[index].scaled = false;
+				this.style.color = "#17D4FE";
+			}
+		}
+
 		document.getElementById("0").addEventListener("click", start_timer);
 		document.getElementById("T0").addEventListener("click", reset_timer);
 		document.getElementById("1").addEventListener("click", start_timer);
 		document.getElementById("T1").addEventListener("click", reset_timer);
 		document.getElementById("2").addEventListener("click", start_timer);
 		document.getElementById("T2").addEventListener("click", reset_timer);
+
+		var timer_tags = document.querySelectorAll(".timer");
+		for (var i=0; i < timer_tags.length; ++i) {
+			timer_tags[i].addEventListener("click", scale_timer);
+		}
 		updateTimer();
 	</script>
 	</body>
